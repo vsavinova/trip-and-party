@@ -1,5 +1,6 @@
 package com.evolve.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +9,11 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Table(name = "Guide")
+@JsonIgnoreProperties(value = {"guide_id"},
+        allowGetters = true)
 public class Guide {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +35,10 @@ public class Guide {
     @Column(nullable = true)
     @JsonManagedReference
     private Collection<Location> locations;
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
+    //    @ManyToMany(mappedBy = "guides",fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "guide_hashtag",
-            joinColumns = { @JoinColumn(name = "guide_id") },
-            inverseJoinColumns = { @JoinColumn(name = "hashtag_id") })
-    private Collection<HashTag> hashTags;
+            joinColumns = @JoinColumn(name = "guide_id", referencedColumnName = "guide_id"),
+            inverseJoinColumns = @JoinColumn(name = "hashtag_id", referencedColumnName = "hashtag_id"))
+    private Collection<HashTag> hashtags;
 }

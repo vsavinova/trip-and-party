@@ -18,10 +18,8 @@ public interface TripRepository  extends CrudRepository<Trip, Integer> {
     @Query("select t from Trip as t where " +
             "   t.id in (select tp.trip from t.participants as tp" +
             "                   where tp.userId in :friendsVkIds) " +
-            "   and (:city is null or :city = t.location) " +
             "   and ((:startDate >= t.startDate) and (:finishDate <= t.finishDate))")
     List<Trip> findFriendsTrips(@Param("friendsVkIds") Collection<Integer> friendsVkIds,
-                                @Param("city") String city,
                                 @Param("startDate") LocalDate startDate,
                                 @Param("finishDate") LocalDate finishDate);
 }

@@ -15,4 +15,8 @@ public class GuideService {
     public Collection<Guide> getGuides(String city) {
         return guideRepository.findAll(city);
     }
+
+    public Guide createGuide(Guide guide) {
+        return guideRepository.save(guide);
+    }
 }
