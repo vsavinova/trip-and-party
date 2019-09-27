@@ -19,16 +19,10 @@ public class Trip {
     private int id;
     @Column(name = "org_id")
     private int orgId;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "description")
-    private String description;
     @Column(name = "visibility")
     private Visibility visibility;
     @Column(name = "startDate")
     private LocalDate startDate;
-    @Column(name = "location")
-    private String location;
     @Column(name = "chat")
     private String chat;
     @Column(name = "finishDate")
