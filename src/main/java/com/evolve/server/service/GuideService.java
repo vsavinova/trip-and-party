@@ -12,8 +12,8 @@ public class GuideService {
     @Autowired
     GuideRepository guideRepository;
 
-    public Collection<Guide> getGuides(String city) {
-        return guideRepository.findAll(city);
+    public Collection<Guide> getGuides() {
+        return guideRepository.findAll();
     }
 
     public Guide createGuide(Guide guide) {

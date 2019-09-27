@@ -26,7 +26,7 @@ public class HashTag {
 //    @JoinTable(name = "guide_hashtag",
 //            joinColumns = { @JoinColumn(name = "hashtag_id") },
 //            inverseJoinColumns = { @JoinColumn(name = "guide_id") })
-//    @JsonBackReference
-    @ManyToMany(mappedBy = "hashtags")
+    @JsonBackReference
+    @ManyToMany(mappedBy = "hashtags", fetch = FetchType.EAGER)
     private Collection<Guide> guides;
 }

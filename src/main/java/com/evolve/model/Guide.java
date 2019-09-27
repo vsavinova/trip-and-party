@@ -36,7 +36,7 @@ public class Guide {
     @JsonManagedReference
     private Collection<Location> locations;
     //    @ManyToMany(mappedBy = "guides",fetch = FetchType.EAGER)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "guide_hashtag",
             joinColumns = @JoinColumn(name = "guide_id", referencedColumnName = "guide_id"),
             inverseJoinColumns = @JoinColumn(name = "hashtag_id", referencedColumnName = "hashtag_id"))

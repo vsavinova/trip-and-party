@@ -18,7 +18,7 @@ public class GuideController {
     @GetMapping(value = "/get_all")
     public Response getAllGuides(@RequestParam(name = "city", required = false) String city) {
         try {
-            return new Response(OK_RESPONSE, guideService.getGuides(city));
+            return new Response(OK_RESPONSE, guideService.getGuides());
         } catch (Throwable e) {
             return new Response(ERROR_RESPONSE, e.getMessage());
         }
