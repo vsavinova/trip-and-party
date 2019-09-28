@@ -1,5 +1,6 @@
 package com.evolve.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,12 +23,9 @@ public class Trip {
     private int id;
     @Column(name = "org_id")
     private int orgId;
-    //    @Column(name = "guide_id")
-//    @OneToOne
-//    @JoinColumn(name = "guide_id")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @Fetch(FetchMode.JOIN)
+    @ManyToOne
     @JoinColumn(name = "guide_id")
+//    @JsonBackReference
     private Guide guide;
     @Column(name = "visibility")
     private Visibility visibility;

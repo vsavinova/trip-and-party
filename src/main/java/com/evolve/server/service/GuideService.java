@@ -19,4 +19,8 @@ public class GuideService {
     public Guide createGuide(Guide guide) {
         return guideRepository.save(guide);
     }
+
+    public Guide getGuide(int guide_id) {
+        return guideRepository.findById(guide_id).get();
+    }
 }

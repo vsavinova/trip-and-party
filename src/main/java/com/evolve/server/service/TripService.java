@@ -19,6 +19,8 @@ import static com.evolve.server.common.Constants.ADMIN_ROLE;
 @Service
 public class TripService {
     @Autowired
+    GuideService guideService;
+    @Autowired
     TripRepository tripRepository;
     @Autowired
     TripParticipantRepository tripParticipantRepository;
@@ -28,6 +30,7 @@ public class TripService {
     }
 
     public Trip createTrip(Trip trip) {
+        trip.setGuide(guideService.getGuide(trip.getGuide().getGuide_id()));
         trip.setParticipants(Collections.singletonList(
                 createTripParticipant(trip.getOrgId(), trip, ADMIN_ROLE, AcceptStatus.ACCEPTED)));
         return tripRepository.save(trip);

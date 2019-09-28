@@ -35,6 +35,10 @@ public class TripController {
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public Response create(@RequestBody Trip trip) {
         try {
+            System.out.println(trip.toString());
+            System.out.println(trip.getGuide());
+            System.out.println(trip.getGuide().getGuide_id());
+            System.out.println(trip.getGuide().getCreator_id());
             return new Response(OK_RESPONSE, tripService.createTrip(trip));
         } catch (Throwable e) {
             return new Response(ERROR_RESPONSE, e);

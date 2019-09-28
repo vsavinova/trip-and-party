@@ -13,7 +13,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @Table(name = "Guide")
-@JsonIgnoreProperties(value = {"guide_id"},
+@JsonIgnoreProperties(value = {"trips"},
         allowGetters = true)
 public class Guide {
     @Id
@@ -41,4 +41,9 @@ public class Guide {
             joinColumns = @JoinColumn(name = "guide_id", referencedColumnName = "guide_id"),
             inverseJoinColumns = @JoinColumn(name = "hashtag_id", referencedColumnName = "hashtag_id"))
     private Collection<HashTag> hashtags;
+    @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL)
+    @Column(nullable = true)
+//    @JsonManagedReference
+    @Transient
+    private Collection<Trip> trips;
 }
