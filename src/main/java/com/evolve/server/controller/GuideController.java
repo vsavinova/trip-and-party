@@ -55,4 +55,13 @@ public class GuideController {
             return new Response(ERROR_RESPONSE, e);
         }
     }
+
+    @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
+    public Response update(@RequestBody Guide guide) {
+        try {
+            return new Response(OK_RESPONSE, guideService.createGuide(guide));
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e);
+        }
+    }
 }

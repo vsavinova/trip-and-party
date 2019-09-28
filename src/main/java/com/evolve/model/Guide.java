@@ -46,4 +46,14 @@ public class Guide {
 //    @JsonManagedReference
     @Transient
     private Collection<Trip> trips;
+
+    public void updateFields(Guide guide) {
+        this.name = guide.name;
+        this.description = guide.description;
+        this.city = guide.city;
+        this.budget = guide.budget;
+        this.likes = guide.likes;
+        this.locations = guide.locations;
+        this.hashtags = guide.hashtags;
+    }
 }

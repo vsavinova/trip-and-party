@@ -32,6 +32,15 @@ public class TripController {
         }
     }
 
+    @PostMapping(value = "/update", consumes = "application/json", produces = "application/json")
+    public Response update(@RequestBody Trip trip) {
+        try {
+            return new Response(OK_RESPONSE, tripService.createTrip(trip));
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e);
+        }
+    }
+
     @GetMapping(value = "/apply")
     public Response apply(@RequestParam(name = "trip_id") Integer tripId,
                           @RequestParam(name = "user_id") Integer vkId) {
