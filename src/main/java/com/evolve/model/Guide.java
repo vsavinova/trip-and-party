@@ -1,5 +1,6 @@
 package com.evolve.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
@@ -35,7 +36,6 @@ public class Guide {
     @Column(nullable = true)
     @JsonManagedReference
     private Collection<Location> locations;
-    //    @ManyToMany(mappedBy = "guides",fetch = FetchType.EAGER)
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "guide_hashtag",
             joinColumns = @JoinColumn(name = "guide_id", referencedColumnName = "guide_id"),
