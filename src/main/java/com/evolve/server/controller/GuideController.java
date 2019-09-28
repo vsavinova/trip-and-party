@@ -15,6 +15,7 @@ import static com.evolve.server.common.Constants.ERROR_RESPONSE;
 import static com.evolve.server.common.Constants.OK_RESPONSE;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/guide")
 public class GuideController {
     @Autowired

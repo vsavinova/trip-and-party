@@ -20,7 +20,6 @@ public class TripParticipant {
     private AcceptStatus accept_status;
     @Column(name = "role")
     private String role;
-    //    private Collection<Ticket> tickets; // maybe more than 1 ticket (msk->ln, ln->msk)
     @ManyToOne
     @JoinColumn(name = "trip_id")
     @JsonBackReference

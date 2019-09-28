@@ -14,10 +14,20 @@ import static com.evolve.server.common.Constants.ERROR_RESPONSE;
 import static com.evolve.server.common.Constants.OK_RESPONSE;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/trip")
 public class TripController {
     @Autowired
     private TripService tripService;
+
+    @GetMapping(value = "/hello", produces="application/json")
+    public Response hello() {
+        try {
+            return new Response(OK_RESPONSE, "hello!!!!");
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e.getMessage());
+        }
+    }
 
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public Response create(@RequestBody Trip trip) {
