@@ -29,11 +29,11 @@ public class Trip {
     private Guide guide;
     @Column(name = "visibility")
     private Visibility visibility;
-    @Column(name = "startDate")
+    @Column(name = "start_date")
     private LocalDate startDate;
     @Column(name = "chat")
     private String chat;
-    @Column(name = "finishDate")
+    @Column(name = "finish_date")
     private LocalDate finishDate;
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     @Column(nullable = true)

@@ -2,10 +2,13 @@ package com.evolve.server.controller;
 
 import com.evolve.model.AcceptStatus;
 import com.evolve.model.Trip;
+import com.evolve.model.Visibility;
 import com.evolve.server.common.Response;
 import com.evolve.server.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 import static com.evolve.server.common.Constants.ERROR_RESPONSE;
 import static com.evolve.server.common.Constants.OK_RESPONSE;
@@ -51,6 +54,18 @@ public class TripController {
         }
     }
 
+    @GetMapping(value = "/get")
+    public Response getAllTrips(@RequestParam(name = "user_id") Integer userId,
+                                @RequestParam(name = "city", required = false) String city,
+                                @RequestParam(name = "visibility", required = false) Visibility visibility,
+                                @RequestParam(name = "startDate", required = false, defaultValue = "1900-01-01") LocalDate startDate,
+                                @RequestParam(name = "finishDate", required = false, defaultValue = "3000-01-01") LocalDate finishDate) {
+        try {
+            return new Response(OK_RESPONSE, tripService.getTrips(userId, city, visibility, startDate, finishDate));
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e.getMessage());
+        }
+    }
 
     @GetMapping(value = "/get_all")
     public Response getAllTrips() {

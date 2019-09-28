@@ -1,7 +1,7 @@
 package com.evolve.model;
 
 public enum AcceptStatus {
-    ACCEPTED, DECLINED, UNDEFINED;
+    DECLINED, ACCEPTED, UNDEFINED;
 
     public static AcceptStatus of(int type) {
         switch (type) {
