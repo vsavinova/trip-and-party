@@ -29,7 +29,7 @@ public class Guide {
     @Column(name = "city")
     private String city;
     @Column(name = "budget")
-    private Integer budget;
+    private String budget;
     @Column(name = "likes")
     private Integer likes;
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL)

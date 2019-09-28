@@ -11,4 +11,8 @@ import java.util.Collection;
 @Repository
 public interface GuideRepository extends CrudRepository<Guide, Integer> {
     Collection<Guide> findAll();
+
+    @Query("select g from Guide as g " +
+            "   where ((:city is null) or (g.city = :city)) ")
+    Collection<Guide> getAll(@Param("city") String city);
 }
