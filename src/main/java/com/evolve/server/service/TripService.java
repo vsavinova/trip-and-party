@@ -30,6 +30,16 @@ public class TripService {
         return tripRepository.save(trip);
     }
 
+    public Trip apply(Integer tripId, Integer vkId) {
+        Trip trip = tripRepository.findById(tripId).get();
+        TripParticipant participant = new TripParticipant();
+        participant.setUserId(vkId);
+        participant.setTrip(trip);
+        participant.setAccept_status(AcceptStatus.UNDEFINED);
+        tripParticipantRepository.save(participant);
+        return tripRepository.findById(tripId).get();
+    }
+
     private TripParticipant createTripParticipant(int userId, Trip trip, String role, AcceptStatus acceptStatus) {
         TripParticipant tripParticipant = new TripParticipant();
         tripParticipant.setUserId(userId);

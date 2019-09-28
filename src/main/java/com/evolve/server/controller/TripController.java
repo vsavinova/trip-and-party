@@ -19,19 +19,6 @@ public class TripController {
     @Autowired
     private TripService tripService;
 
-//    @GetMapping(value = "/create")
-//    public Response createTrip(@RequestParam(name = "org_id") Integer orgId,
-//                               @RequestParam(name = "guide_id") Integer guideId, @RequestParam(name = "visibility") Visibility visibility,
-//                               @RequestParam(name = "start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-//                               @RequestParam(name = "finish_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finishDate,
-//                               @RequestParam(name = "chat") String chat) {
-//        try {
-////            return new Response(OK_RESPONSE, tripService.createTrip(orgId, guideId, visibility, startDate, finishDate, chat));
-//        } catch (Throwable e) {
-//            return new Response(ERROR_RESPONSE, e.getMessage());
-//        }
-//    }
-
     @PostMapping(value = "/create", consumes = "application/json", produces = "application/json")
     public Response create(@RequestBody Trip trip) {
         try {
@@ -42,6 +29,16 @@ public class TripController {
             return new Response(OK_RESPONSE, tripService.createTrip(trip));
         } catch (Throwable e) {
             return new Response(ERROR_RESPONSE, e);
+        }
+    }
+
+    @GetMapping(value = "/apply")
+    public Response apply(@RequestParam(name = "trip_id") Integer tripId,
+                          @RequestParam(name = "user_id") Integer vkId) {
+        try {
+            return new Response(OK_RESPONSE, tripService.apply(tripId, vkId));
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e.getMessage());
         }
     }
 
