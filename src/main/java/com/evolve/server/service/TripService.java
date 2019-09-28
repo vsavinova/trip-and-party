@@ -3,14 +3,11 @@ package com.evolve.server.service;
 import com.evolve.model.AcceptStatus;
 import com.evolve.model.Trip;
 import com.evolve.model.TripParticipant;
-import com.evolve.model.Visibility;
 import com.evolve.server.repository.TripParticipantRepository;
 import com.evolve.server.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,8 +15,6 @@ import static com.evolve.server.common.Constants.ADMIN_ROLE;
 
 @Service
 public class TripService {
-    @Autowired
-    GuideService guideService;
     @Autowired
     TripRepository tripRepository;
     @Autowired
@@ -30,7 +25,6 @@ public class TripService {
     }
 
     public Trip createTrip(Trip trip) {
-        trip.setGuide(guideService.getGuide(trip.getGuide().getGuide_id()));
         trip.setParticipants(Collections.singletonList(
                 createTripParticipant(trip.getOrgId(), trip, ADMIN_ROLE, AcceptStatus.ACCEPTED)));
         return tripRepository.save(trip);
