@@ -29,6 +29,13 @@ public class GuideService {
         return guideRepository.findById(guide_id).get();
     }
 
+    public Guide updateLikes(Integer tripId, Boolean like) {
+        Guide guide = guideRepository.findById(tripId).get();
+        guide.setLikes(like ? guide.getLikes() + 1 : guide.getLikes() - 1);
+        guideRepository.save(guide);
+        return guide;
+    }
+
     public Collection<Guide> getGuides(String city, Collection<String> hashtags, String budget) {
         Collection<Guide> guides = guideRepository.getAll(city);
         return filterGuides(guides, hashtags, budget);
@@ -44,14 +51,15 @@ public class GuideService {
                             .collect(Collectors.toList());
                     return (hashtags.isEmpty()
                             || !(new ArrayList<>(hashtags)
-                                .retainAll(guideHashtags)))
+                            .retainAll(guideHashtags)))
                             && compareBudget(g.getBudget(), budget);
                 })
                 .collect(Collectors.toList());
 
     }
 
-    private boolean compareBudget(String guideBudget, String budget) {
-        return Integer.parseInt(guideBudget) <= Integer.parseInt(budget);
+    public static boolean compareBudget(String guideBudget, String budget) {
+        return (guideBudget == null || budget == null) ||
+                (Integer.parseInt(guideBudget) <= Integer.parseInt(budget));
     }
 }

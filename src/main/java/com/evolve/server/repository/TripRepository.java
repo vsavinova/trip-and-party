@@ -22,4 +22,5 @@ public interface TripRepository extends CrudRepository<Trip, Integer> {
             "                   where (tp.userId in :friendsVkIds)" +
             "                       and (tp.accept_status = 1)) ")
     List<Trip> findFriendsTrips(@Param("friendsVkIds") Collection<Integer> friendsVkIds);
+
 }

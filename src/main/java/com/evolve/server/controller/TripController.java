@@ -5,10 +5,15 @@ import com.evolve.model.Trip;
 import com.evolve.model.Visibility;
 import com.evolve.server.common.Response;
 import com.evolve.server.service.TripService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.evolve.server.common.Constants.ERROR_RESPONSE;
 import static com.evolve.server.common.Constants.OK_RESPONSE;
@@ -20,7 +25,7 @@ public class TripController {
     @Autowired
     private TripService tripService;
 
-    @GetMapping(value = "/hello", produces="application/json")
+    @GetMapping(value = "/hello", produces = "application/json")
     public Response hello() {
         try {
             return new Response(OK_RESPONSE, "hello!!!!");
@@ -73,14 +78,54 @@ public class TripController {
         }
     }
 
-    @GetMapping(value = "/get")
-    public Response getAllTrips(@RequestParam(name = "user_id") Integer userId,
-                                @RequestParam(name = "city", required = false) String city,
-                                @RequestParam(name = "visibility", required = false) Visibility visibility,
-                                @RequestParam(name = "startDate", required = false, defaultValue = "1900-01-01") LocalDate startDate,
-                                @RequestParam(name = "finishDate", required = false, defaultValue = "3000-01-01") LocalDate finishDate) {
+//    @GetMapping(value = "/get")
+//    public Response getAllTrips(@RequestParam(name = "user_id") Integer userId,
+//                                @RequestParam(name = "city", required = false) String city,
+//                                @RequestParam(name = "visibility", required = false) Visibility visibility,
+//                                @RequestParam(name = "startDate", required = false, defaultValue = "1900-01-01") LocalDate startDate,
+//                                @RequestParam(name = "finishDate", required = false, defaultValue = "3000-01-01") LocalDate finishDate) {
+//        try {
+//            return new Response(OK_RESPONSE, tripService.getTrips(userId, city, visibility, startDate, finishDate));
+//        } catch (Throwable e) {
+//            return new Response(ERROR_RESPONSE, e.getMessage());
+//        }
+//    }
+
+    @PostMapping(value = "/get", consumes = "application/json", produces = "application/json")
+    public Response get(@RequestBody Map<String, Object> params) {
         try {
-            return new Response(OK_RESPONSE, tripService.getTrips(userId, city, visibility, startDate, finishDate));
+            boolean mine = (boolean) params.get("mine");
+            Integer user_id = (Integer) params.get("user_id");
+            if (mine)
+                return new Response(OK_RESPONSE, tripService.history(user_id));
+
+            Integer trip_id = (Integer) params.get("trip_id");
+            if (trip_id != null)
+                return new Response(OK_RESPONSE, tripService.getTrip(trip_id));
+
+            String city = (String) params.get("city");
+            String budget = (String) params.get("budget");
+            Visibility visibility = Visibility.of((Integer) params.get("visibility"));
+            LocalDate startDate = LocalDate.parse((String) params.get("start_date"));
+            LocalDate finishDate = LocalDate.parse((String) params.get("finish_date"));
+            Collection<Map<String, Object>> hashtagsMapList = (Collection<Map<String, Object>>) params.get("hashtags");
+            List<String> hashtags = null;
+            if (hashtagsMapList != null) {
+                hashtags = hashtagsMapList.stream()
+                        .map(m -> (String) m.get("name"))
+                        .collect(Collectors.toList());
+            }
+            return new Response(OK_RESPONSE, tripService.getTrips(user_id, visibility, startDate,
+                                                                finishDate, city, hashtags, budget));
+        } catch (Throwable e) {
+            return new Response(ERROR_RESPONSE, e);
+        }
+    }
+
+    @GetMapping(value = "/history")
+    public Response history(Integer userId) {
+        try {
+            return new Response(OK_RESPONSE, tripService.history(userId));
         } catch (Throwable e) {
             return new Response(ERROR_RESPONSE, e.getMessage());
         }

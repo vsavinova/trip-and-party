@@ -21,6 +21,12 @@ public class GuideController {
     @Autowired
     GuideService guideService;
 
+    @GetMapping(value = "/like")
+    public Response updateLikes(@RequestParam(name = "trip_id") Integer tripId,
+                                @RequestParam(name = "like") Boolean like) {
+        return new Response(OK_RESPONSE, guideService.updateLikes(tripId, like));
+    }
+
     @GetMapping(value = "/get_all")
     public Response getAllGuides(@RequestParam(name = "city", required = false) String city) {
         try {
@@ -33,6 +39,10 @@ public class GuideController {
     @PostMapping(value = "/get", consumes = "application/json", produces = "application/json")
     public Response get(@RequestBody Map<String, Object> params) {
         try {
+            Integer guide_id = (Integer) params.get("guide_id");
+            if (guide_id != null)
+                return new Response(OK_RESPONSE, guideService.getGuide(guide_id));
+
             String city = (String) params.get("city");
             String budget = (String) params.get("budget");
             Collection<Map<String, Object>> hashtagsMapList = (Collection<Map<String, Object>>) params.get("hashtags");

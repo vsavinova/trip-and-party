@@ -1,19 +1,14 @@
 package com.evolve.server.service;
 
-import com.evolve.model.AcceptStatus;
-import com.evolve.model.Trip;
-import com.evolve.model.TripParticipant;
-import com.evolve.model.Visibility;
+import com.evolve.model.*;
 import com.evolve.server.repository.TripParticipantRepository;
 import com.evolve.server.repository.TripRepository;
+import com.evolve.server.vk.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.evolve.server.common.Constants.ADMIN_ROLE;
@@ -24,6 +19,8 @@ public class TripService {
     TripRepository tripRepository;
     @Autowired
     TripParticipantRepository tripParticipantRepository;
+    @Autowired
+    Getter getter;
 
     public Collection<Trip> getAllTrips() {
         return tripRepository.findAll();
@@ -59,13 +56,38 @@ public class TripService {
         return trip;
     }
 
-    public Collection<Trip> getTrips(Integer userId, String city, Visibility visibility,
-                                     LocalDate startDate, LocalDate finishDate) {
+    public Collection<Trip> getTrips(Integer userId, Visibility visibility, LocalDate startDate,
+                                     LocalDate finishDate, String city, List<String> hashtags,
+                                     String budget) {
         Collection<Integer> friendsVkIds = getFriendsVkIds(userId);
-        List<Trip> friendsTrips = tripRepository.findFriendsTrips(friendsVkIds); //, city, startDate, finishDate);
-        System.out.println("count: " + friendsTrips.size());
+        Collection<Trip> friendsTrips;
+        if (visibility == Visibility.ONE_HAND_FRIEND)
+            friendsTrips = tripRepository.findFriendsTrips(friendsVkIds); //, city, startDate, finishDate);
+        else
+            friendsTrips = tripRepository.findAll();
 
-        return fillFriendsParticipantsInTrips(friendsTrips, friendsVkIds);
+        return fillFriendsParticipantsInTrips(
+                filterTrips(friendsTrips, startDate, finishDate, city, hashtags, budget),
+                friendsVkIds);
+    }
+
+    private Collection<Trip> filterTrips(Collection<Trip> friendsTrips, LocalDate startDate, LocalDate finishDate,
+                                         String city, List<String> hashtags, String budget) {
+        return friendsTrips.stream()
+                .filter(t -> t.getStartDate().isAfter(startDate)
+                        && t.getFinishDate().isBefore(finishDate)
+                        && t.getGuide().getCity().equals(city)
+                        && GuideService.compareBudget(t.getGuide().getBudget(), budget)
+                        && compareHashTags(t.getGuide().getHashtags()
+                        .stream().map(HashTag::getName)
+                        .collect(Collectors.toList()), hashtags))
+                .collect(Collectors.toList());
+    }
+
+    private boolean compareHashTags(List<String> gHashtags, List<String> hashtags) {
+        return (hashtags.isEmpty()
+                || !(new ArrayList<>(hashtags)
+                .retainAll(gHashtags)));
     }
 
     private Collection<Trip> fillFriendsParticipantsInTrips(Collection<Trip> trips, Collection<Integer> friendsVkIds) {
@@ -76,13 +98,20 @@ public class TripService {
                     .collect(Collectors.toList());
             trip.setFriendParticipants(
                     collect);
-            System.out.println("" + trip.getId() + " " + collect.size());
         }
         return trips;
     }
 
-    private Collection<Integer> getFriendsVkIds(Integer userId) {
-        return Arrays.asList(654321, 123456, 1111, 666, 188181, 3333, 0); // TODO: 27.09.2019 get from VK API
+    public Collection<Integer> getFriendsVkIds(Integer userId) {
+        Map<String, Object> response = (Map<String, Object>) new Getter().getFriends(userId).get("response");
+        List<Double> friends = (List<Double>) response.get("items");
+        return friends.stream()
+                .map(Double::intValue)
+                .collect(Collectors.toList());
+//        ArrayList<Integer> friendIds = new ArrayList<>();
+//        friends.forEach(f -> friendIds.add((Integer) f.get("id")));
+//        return friendIds;
+//        return Arrays.asList(654321, 123456, 1111, 666, 188181, 3333, 0);
     }
 
     private TripParticipant createTripParticipant(int userId, Trip trip, String role, AcceptStatus acceptStatus) {
@@ -92,5 +121,19 @@ public class TripService {
         tripParticipant.setRole(role);
         tripParticipant.setAccept_status(acceptStatus);
         return tripParticipant;
+    }
+
+    public Trip getTrip(Integer trip_id) {
+        return tripRepository.findById(trip_id).get();
+    }
+
+    public Collection<Trip> history(Integer userId) {
+        return getAllTrips().stream()
+                .filter(t -> isParticipant(t.getParticipants(), userId))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isParticipant(Collection<TripParticipant> participants, Integer userId) {
+        return participants.stream().anyMatch(p -> userId.equals(p.getUserId()));
     }
 }
