@@ -30,7 +30,7 @@ public class Getter {
                 response.append(inputLine);
             }
             in.close();
-            System.out.println(response.toString());
+//            System.out.println(response.toString());
             Gson g = new Gson();
             return g.fromJson(response.toString(), HashMap.class);
         } catch (Exception e){

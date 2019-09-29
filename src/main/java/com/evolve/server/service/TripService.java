@@ -59,14 +59,19 @@ public class TripService {
     public Collection<Trip> getTrips(Integer userId, Visibility visibility, LocalDate startDate,
                                      LocalDate finishDate, String city, List<String> hashtags,
                                      String budget) {
-        Collection<Integer> friendsVkIds = getFriendsVkIds(userId);
         Collection<Trip> friendsTrips;
-        if (visibility == Visibility.ONE_HAND_FRIEND)
+        Collection<Integer> friendsVkIds = getFriendsVkIds(userId);
+        if (visibility == Visibility.ONE_HAND_FRIEND) {
             friendsTrips = tripRepository.findFriendsTrips(friendsVkIds); //, city, startDate, finishDate);
-        else
+//            friendsTrips = filterTrips(friendsTrips, startDate, finishDate, city, hashtags, budget); // TODO: 29.09.2019 filter should be below
+        } else {
+            System.out.println("FIND ALL");
             friendsTrips = tripRepository.findAll();
+            System.out.println("SIZE: " + friendsTrips.size());
+        }
 
         return fillFriendsParticipantsInTrips(
+//                friendsTrips,
                 filterTrips(friendsTrips, startDate, finishDate, city, hashtags, budget),
                 friendsVkIds);
     }
@@ -76,7 +81,8 @@ public class TripService {
         return friendsTrips.stream()
                 .filter(t -> t.getStartDate().isAfter(startDate)
                         && t.getFinishDate().isBefore(finishDate)
-                        && t.getGuide().getCity().equals(city)
+                        && (city.isEmpty()
+                        || t.getGuide().getCity().equals(city))
                         && GuideService.compareBudget(t.getGuide().getBudget(), budget)
                         && compareHashTags(t.getGuide().getHashtags()
                         .stream().map(HashTag::getName)
@@ -104,14 +110,13 @@ public class TripService {
 
     public Collection<Integer> getFriendsVkIds(Integer userId) {
         Map<String, Object> response = (Map<String, Object>) new Getter().getFriends(userId).get("response");
+        if (response == null)
+            return new ArrayList<>();
         List<Double> friends = (List<Double>) response.get("items");
+//        System.out.println("friends: " + friends);
         return friends.stream()
                 .map(Double::intValue)
                 .collect(Collectors.toList());
-//        ArrayList<Integer> friendIds = new ArrayList<>();
-//        friends.forEach(f -> friendIds.add((Integer) f.get("id")));
-//        return friendIds;
-//        return Arrays.asList(654321, 123456, 1111, 666, 188181, 3333, 0);
     }
 
     private TripParticipant createTripParticipant(int userId, Trip trip, String role, AcceptStatus acceptStatus) {

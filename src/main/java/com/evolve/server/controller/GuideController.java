@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,9 +23,9 @@ public class GuideController {
     GuideService guideService;
 
     @GetMapping(value = "/like")
-    public Response updateLikes(@RequestParam(name = "trip_id") Integer tripId,
+    public Response updateLikes(@RequestParam(name = "guide_id") Integer guideId,
                                 @RequestParam(name = "like") Boolean like) {
-        return new Response(OK_RESPONSE, guideService.updateLikes(tripId, like));
+        return new Response(OK_RESPONSE, guideService.updateLikes(guideId, like));
     }
 
     @GetMapping(value = "/get_all")
@@ -41,7 +42,7 @@ public class GuideController {
         try {
             Integer guide_id = (Integer) params.get("guide_id");
             if (guide_id != null)
-                return new Response(OK_RESPONSE, guideService.getGuide(guide_id));
+                return new Response(OK_RESPONSE, Collections.singletonList(guideService.getGuide(guide_id)));
 
             String city = (String) params.get("city");
             String budget = (String) params.get("budget");

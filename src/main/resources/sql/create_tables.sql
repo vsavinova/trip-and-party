@@ -39,15 +39,17 @@ create table Guide_HashTag (
 );
 
 create table Trip(
-    trip_id serial,
-    org_id integer not null,
-    guide_id integer not null,
-    visibility integer not null,
-    start_date date,
-    finish_date date,
-    chat varchar(50),
-    primary key(trip_id),
-    foreign key (guide_id) references Guide
+                     trip_id serial,
+                     org_id integer not null,
+                     guide_id integer not null,
+                     name varchar(50),
+                     description varchar(250),
+                     visibility integer not null,
+                     start_date date,
+                     finish_date date,
+                     chat varchar(50),
+                     primary key(trip_id),
+                     foreign key (guide_id) references Guide
 );
 
 

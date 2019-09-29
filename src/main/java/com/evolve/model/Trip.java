@@ -27,6 +27,10 @@ public class Trip {
     @JoinColumn(name = "guide_id")
 //    @JsonBackReference
     private Guide guide;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "description")
+    private String description;
     @Column(name = "visibility")
     private Visibility visibility;
     @Column(name = "start_date")

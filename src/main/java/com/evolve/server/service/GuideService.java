@@ -29,8 +29,8 @@ public class GuideService {
         return guideRepository.findById(guide_id).get();
     }
 
-    public Guide updateLikes(Integer tripId, Boolean like) {
-        Guide guide = guideRepository.findById(tripId).get();
+    public Guide updateLikes(Integer guideId, Boolean like) {
+        Guide guide = guideRepository.findById(guideId).get();
         guide.setLikes(like ? guide.getLikes() + 1 : guide.getLikes() - 1);
         guideRepository.save(guide);
         return guide;
@@ -60,6 +60,7 @@ public class GuideService {
 
     public static boolean compareBudget(String guideBudget, String budget) {
         return (guideBudget == null || budget == null) ||
+                (guideBudget.isEmpty()) || (budget.isEmpty()) ||
                 (Integer.parseInt(guideBudget) <= Integer.parseInt(budget));
     }
 }

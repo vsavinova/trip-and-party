@@ -5,14 +5,11 @@ import com.evolve.model.Trip;
 import com.evolve.model.Visibility;
 import com.evolve.server.common.Response;
 import com.evolve.server.service.TripService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.evolve.server.common.Constants.ERROR_RESPONSE;
@@ -94,20 +91,20 @@ public class TripController {
     @PostMapping(value = "/get", consumes = "application/json", produces = "application/json")
     public Response get(@RequestBody Map<String, Object> params) {
         try {
-            boolean mine = (boolean) params.get("mine");
+            Boolean mine = (Boolean) params.get("mine");
             Integer user_id = (Integer) params.get("user_id");
-            if (mine)
+            if ((mine != null) && mine)
                 return new Response(OK_RESPONSE, tripService.history(user_id));
 
-            Integer trip_id = (Integer) params.get("trip_id");
+            Integer trip_id = params.get("trip_id") != null ? (Integer) params.get("trip_id") : null;
             if (trip_id != null)
-                return new Response(OK_RESPONSE, tripService.getTrip(trip_id));
+                return new Response(OK_RESPONSE, Collections.singletonList(tripService.getTrip(trip_id)));
 
-            String city = (String) params.get("city");
-            String budget = (String) params.get("budget");
-            Visibility visibility = Visibility.of((Integer) params.get("visibility"));
-            LocalDate startDate = LocalDate.parse((String) params.get("start_date"));
-            LocalDate finishDate = LocalDate.parse((String) params.get("finish_date"));
+            String city = params.get("city") != null ? ((String) params.get("city")) : "";
+            String budget = params.get("budget") != null ? (String) params.get("budget") : null;
+            Visibility visibility = params.get("visibility") != null ? Visibility.of((Integer) params.get("visibility")) : Visibility.ALL;
+            LocalDate startDate = params.get("start_date") != null ? LocalDate.parse((String) params.get("start_date")) :  LocalDate.parse("1900-01-01");
+            LocalDate finishDate = params.get("finish_date") != null ? LocalDate.parse((String) params.get("finish_date")) : LocalDate.parse("3000-01-01");
             Collection<Map<String, Object>> hashtagsMapList = (Collection<Map<String, Object>>) params.get("hashtags");
             List<String> hashtags = null;
             if (hashtagsMapList != null) {
@@ -116,7 +113,7 @@ public class TripController {
                         .collect(Collectors.toList());
             }
             return new Response(OK_RESPONSE, tripService.getTrips(user_id, visibility, startDate,
-                                                                finishDate, city, hashtags, budget));
+                    finishDate, city, hashtags, budget));
         } catch (Throwable e) {
             return new Response(ERROR_RESPONSE, e);
         }
