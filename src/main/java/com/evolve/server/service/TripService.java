@@ -63,7 +63,6 @@ public class TripService {
         Collection<Integer> friendsVkIds = getFriendsVkIds(userId);
         if (visibility == Visibility.ONE_HAND_FRIEND) {
             friendsTrips = tripRepository.findFriendsTrips(friendsVkIds); //, city, startDate, finishDate);
-//            friendsTrips = filterTrips(friendsTrips, startDate, finishDate, city, hashtags, budget); // TODO: 29.09.2019 filter should be below
         } else {
             System.out.println("FIND ALL");
             friendsTrips = tripRepository.findAll();
@@ -71,7 +70,6 @@ public class TripService {
         }
 
         return fillFriendsParticipantsInTrips(
-//                friendsTrips,
                 filterTrips(friendsTrips, startDate, finishDate, city, hashtags, budget),
                 friendsVkIds);
     }
